@@ -16,11 +16,7 @@ The application allows users to securely manage their own todos, while administr
 - USER and ADMIN roles
 
 ### Todo Management
-- Create a todo
-- View todos
-- View a todo by ID
-- Update a todo
-- Delete a todo
+- Create, view, update and delete todos
 - Users can access only their own todos
 
 ### Search, Filtering & Pagination
@@ -32,6 +28,7 @@ The application allows users to securely manage their own todos, while administr
 
 ### Admin Features
 - View all registered users
+- Delete users
 - View all todos
 - Delete any todo
 - Dashboard statistics
@@ -71,16 +68,78 @@ The application allows users to securely manage their own todos, while administr
 
 ## 🏗️ Architecture
 
-```text
 Client / Postman / Swagger
-            ↓
-       REST Controller
-            ↓
-          Service
-            ↓
-       JPA Repository
-            ↓
-        Hibernate
-            ↓
-          MySQL
+↓
+REST Controller
+↓
+Service
+↓
+JPA Repository
+↓
+Hibernate
+↓
+MySQL
 
+## ⚙️ Configuration
+
+The application uses environment variables for database and JWT configuration.
+
+DB_URL
+DB_USERNAME
+DB_PASSWORD
+JWT_SECRET
+JWT_EXPIRATION
+
+## ▶️ Run the Application
+
+On Windows:
+
+.\mvnw.cmd spring-boot:run
+
+The API runs on:
+
+http://localhost:8080
+
+## 📚 API Documentation
+
+Swagger UI:
+
+http://localhost:8080/swagger-ui/index.html
+
+## 🔐 Main API Endpoints
+
+### Authentication
+
+POST /users/register
+POST /users/login
+GET  /users/me
+
+### Todos
+
+GET    /todos
+GET    /todos/{id}
+POST   /todos/new
+PUT    /todos/update/{id}
+DELETE /todos/delete/{id}
+
+### Admin
+
+GET    /admin/users
+DELETE /admin/users/{id}
+GET    /admin/todos
+DELETE /admin/todos/{id}
+GET    /admin/dashboard
+
+## 🧪 Build
+
+.\mvnw.cmd clean package -DskipTests
+
+## 🖥️ Frontend
+
+React frontend:
+
+https://github.com/shafi3m/todo-management-frontend
+
+## 👨‍💻 Author
+
+Mohammed Shafi

@@ -1,6 +1,9 @@
 package com.example.todo;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +22,9 @@ public class AdminService {
         this.todoRepository = todoRepository;
     }
 
-
-    // Get all users
     public List<UserDTO> getAllUsers() {
 
         List<User> users = repository.findAll();
-
         List<UserDTO> response = new ArrayList<>();
 
         for (User user : users) {
@@ -41,29 +41,22 @@ public class AdminService {
         return response;
     }
 
-
-    // Get all todos
     public List<TodoDTO> getAllTodos() {
 
         List<Todo> todos = todoRepository.findAll();
-
         List<TodoDTO> response = new ArrayList<>();
 
         for (Todo todo : todos) {
-
             response.add(convertToDTO(todo));
         }
 
         return response;
     }
 
-
-    // Delete any todo
     public boolean deleteTodo(Long id) {
 
-        Todo todo =
-                todoRepository.findById(id)
-                        .orElse(null);
+        Todo todo = todoRepository.findById(id)
+                .orElse(null);
 
         if (todo == null) {
             return false;
@@ -74,19 +67,35 @@ public class AdminService {
         return true;
     }
 
+    @Transactional
+    public void deleteUser(Long userId) {
 
-    // Dashboard statistics
+        User currentUser = getLoggedInUser();
+
+        if (currentUser.getId().equals(userId)) {
+            throw new CannotDeleteOwnAccountException(
+                    "You cannot delete your own admin account"
+            );
+        }
+
+        User user = repository.findById(userId)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        todoRepository.deleteByUser(user);
+
+        repository.delete(user);
+    }
+
     public DashboardDTO getDashboard() {
 
-        long totalUsers =
-                repository.count();
-
-        long totalTodos =
-                todoRepository.count();
-
+        long totalUsers = repository.count();
+        long totalTodos = todoRepository.count();
         long completedTodos =
                 todoRepository.countByCompleted(true);
-
         long pendingTodos =
                 todoRepository.countByCompleted(false);
 
@@ -98,8 +107,16 @@ public class AdminService {
         );
     }
 
+    private User getLoggedInUser() {
 
-    // Convert Todo Entity → DTO
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        return (User) authentication.getPrincipal();
+    }
+
     private TodoDTO convertToDTO(Todo todo) {
 
         TodoDTO dto = new TodoDTO();

@@ -27,5 +27,8 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     );
 
     Optional<Todo> findByIdAndUser(Long id, User user);
+
     long countByCompleted(boolean completed);
+
+    void deleteByUser(User user);
 }

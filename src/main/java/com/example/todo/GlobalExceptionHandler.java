@@ -12,8 +12,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-    // Validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<Map<String, String>> handleValidationException(
@@ -37,8 +35,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Illegal argument errors
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<Void> handleIllegalArgumentException(
@@ -51,8 +47,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Duplicate email
     @ExceptionHandler(EmailAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiResponse<Void> handleEmailAlreadyExists(
@@ -65,12 +59,34 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Invalid login credentials
     @ExceptionHandler(InvalidCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse<Void> handleInvalidCredentials(
             InvalidCredentialsException ex) {
+
+        return new ApiResponse<>(
+                false,
+                ex.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse<Void> handleUserNotFound(
+            UserNotFoundException ex) {
+
+        return new ApiResponse<>(
+                false,
+                ex.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(CannotDeleteOwnAccountException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<Void> handleCannotDeleteOwnAccount(
+            CannotDeleteOwnAccountException ex) {
 
         return new ApiResponse<>(
                 false,

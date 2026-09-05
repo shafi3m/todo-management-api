@@ -1,5 +1,7 @@
 package com.example.todo;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +12,6 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-
     public UserService(
             JwtService jwtService,
             UserRepository repository,
@@ -20,7 +21,6 @@ public class UserService {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
-
 
     public UserDTO registerUser(UserRequestDTO request) {
 
@@ -34,8 +34,6 @@ public class UserService {
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-
-        // Hash password before saving
         user.setPassword(
                 passwordEncoder.encode(request.getPassword())
         );
@@ -43,14 +41,12 @@ public class UserService {
         User savedUser = repository.save(user);
 
         UserDTO response = new UserDTO();
-
         response.setId(savedUser.getId());
         response.setName(savedUser.getName());
         response.setEmail(savedUser.getEmail());
 
         return response;
     }
-
 
     public LoginResponseDTO loginUser(LoginRequestDTO request) {
 
@@ -76,5 +72,22 @@ public class UserService {
         String token = jwtService.generateToken(user);
 
         return new LoginResponseDTO(token);
+    }
+
+    public CurrentUserDTO getCurrentUser() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        User user = (User) authentication.getPrincipal();
+
+        return new CurrentUserDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }

@@ -32,6 +32,22 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteUser(
+            @PathVariable Long id) {
+
+        service.deleteUser(id);
+
+        ApiResponse<Void> response =
+                new ApiResponse<>(
+                        true,
+                        "User deleted successfully by admin",
+                        null
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/todos")
     public ResponseEntity<ApiResponse<List<TodoDTO>>> getAllTodos() {
 

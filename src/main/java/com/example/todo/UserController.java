@@ -46,4 +46,20 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<CurrentUserDTO>> getCurrentUser() {
+
+        CurrentUserDTO currentUser =
+                service.getCurrentUser();
+
+        ApiResponse<CurrentUserDTO> response =
+                new ApiResponse<>(
+                        true,
+                        "Current user retrieved successfully",
+                        currentUser
+                );
+
+        return ResponseEntity.ok(response);
+    }
 }

@@ -23,7 +23,6 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http) throws Exception {
@@ -69,13 +68,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     // BCrypt password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     // CORS configuration
     @Bean
@@ -85,7 +82,11 @@ public class SecurityConfig {
                 new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5174")
+                List.of(
+                        "http://localhost:5174",
+                        "http://localhost:5173",
+                        "https://todo-management-frontend-kappa.vercel.app"
+                )
         );
 
         configuration.setAllowedMethods(
